@@ -19,7 +19,14 @@ class MidiEvnt:
 
 
 def to_events(filename):
-    return [[x.note, x.velocity, x.time] for x in filename.tracks[1] if isinstance(x, mido.Message)]
+    def get_velocity(m: mido.Message, default_value: int=0):
+        try:
+            return m.velocity
+        except:
+            return default_value
+
+    return [[x.note, get_velocity(x), x.time] for x in filename.tracks[1] if
+            isinstance(x, mido.Message)]
 
 
 def to_timed_pitches(events):
@@ -55,11 +62,6 @@ def calculate_avg_diff(control: [MidiEvnt], performance: [MidiEvnt], threshold_m
 
 
 if __name__ == '__main__':
-
-    path_perfect = "a.mid"
-    path_performance = "b.mid"
-    threshold = 100
-
     path_perfect = argv[1]
     path_performance = argv[2]
     threshold = 100 if len(argv) < 4 else int(argv[3])
